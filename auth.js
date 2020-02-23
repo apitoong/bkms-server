@@ -1,7 +1,9 @@
 const { varify } = require("./helpers/jwt");
 // const { Siswa, Admin } = require("../models");
 var jwtDecode = require("jwt-decode");
-
+const { User} = require("./models");
+ 
+ 
 function Authentication(req, res, next) {
   try {
     let decode = varify(req.headers.token);
@@ -15,7 +17,7 @@ function Authentication(req, res, next) {
 function Authorization(req, res, next) {
   var validate = jwtDecode(req.headers.token);
 
-  Admin.findOne({
+  User.findOne({
     where: {
       id: validate.id,
       role: "admin"
@@ -35,13 +37,13 @@ function Authorization(req, res, next) {
 }
 
 function SuperAuth(req, res, next) {
-  var validate = varify(req.headers.token);
-  console.log(req.headers.token);
-  console.log(validate);
-  Admin.findOne({
+  var validate = varify(req.session.adminBkms);
+  
+ 
+  User.findOne({
     where: {
       id: validate.id,
-      role: "admin"
+      role: "super"
     }
   })
     .then(data => {
@@ -57,27 +59,37 @@ function SuperAuth(req, res, next) {
     .catch(next);
 }
 function adminAuth(req, res, next) {
-  var validate = varify(req.headers.token);
-  console.log(req.headers.token);
-  console.log(validate);
-  Admin.findOne({
-    where: {
-      id: validate.id
-    }
-  })
-    .then(data => {
-      // console.log(data);
-
-      if (data.role == "admin" || data.role == "super") {
-        next();
-      } else {
-        next({
-          status: 403,
-          message: `you don't have the authority to do this action`
-        });
+  
+  if(req.session.adminBkms==null){
+  
+    res.json({
+      status: false,
+      code: 406,
+      message: `you don't have the authority to do this action`,
+      data: {},
+    })
+  }else{
+    var validate = varify(req.session.adminBkms);
+    User.findOne({
+      where: {
+        id: validate.id
       }
     })
-    .catch(next);
+      .then(data => {
+       
+  
+        if (data.role == "admin" || data.role == "super") {
+          next();
+        } else {
+          next({
+            status: 403,
+            message: `you don't have the authority to do this action`
+          });
+        }
+      })
+      .catch(next);
+
+  }
 }
 
 module.exports = {
@@ -85,4 +97,5 @@ module.exports = {
   Authorization,
   SuperAuth,
   adminAuth
+  
 };

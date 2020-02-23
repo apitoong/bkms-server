@@ -7,6 +7,11 @@ module.exports = (sequelize, DataTypes) => {
   }, {});
   Gambar.associate = function(models) {
     // associations can be defined here
+    Gambar.belongsTo(models.Berita, {
+      foreignKey: "berita_id",
+      as: "berita",
+      constraints: false
+    });
   };
   return Gambar;
 };

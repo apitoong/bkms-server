@@ -18,20 +18,9 @@ app.use(
     resave: true,
     saveUninitialized: true,
     secret: process.env.sessionSecret,
-    cookie: { maxAge: 60000 }
+    cookie: { maxAge: 7200000 }
   })
 );
-// app.use(
-//   session({
-//     secret: process.env.sessionSecret,
-//     key: "bkmskey",
-//     proxy: "true",
-//     store: new MemcachedStore({
-//       hosts: [process.env.host], //Memcached server host url
-//       secret: "123, ABC" // Optionally use transparent encryption for memcache session data
-//     })
-//   })
-// );
 
 app.use(express.static("./")); // serve all files in root folder, such as index.html
 app.use(express.urlencoded({ extended: false }));
