@@ -6,9 +6,10 @@ module.exports = (sequelize, DataTypes) => {
     description: DataTypes.TEXT,
     gambar_id: DataTypes.STRING,
     status: DataTypes.STRING,
-    user_id:DataTypes.STRING
+    user_id: DataTypes.STRING,
+    posting: DataTypes.STRING
   }, {});
-  Berita.associate = function(models) {
+  Berita.associate = function (models) {
     // associations can be defined here
     Berita.belongsTo(models.Gambar, {
       foreignKey: "gambar_id",
@@ -28,7 +29,7 @@ module.exports = (sequelize, DataTypes) => {
       as: 'user'
     });
 
-   
+
   };
   return Berita;
 };

@@ -1,0 +1,6 @@
+port=4002
+salt=bkmsSecret
+JWT_SECRET=bkmsScret
+host=http://localhost:4002
+sessionSecret=bkmsSessionSecret
+saltCrypto=bkmsSaltCrypto

@@ -4,7 +4,7 @@ module.exports = (sequelize, DataTypes) => {
     berita_id: DataTypes.STRING,
     madrasah_id: DataTypes.STRING
   }, {});
-  BeritaMadrasah.associate = function(models) {
+  BeritaMadrasah.associate = function (models) {
     // associations can be defined here
   };
   return BeritaMadrasah;

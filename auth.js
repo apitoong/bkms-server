@@ -1,9 +1,13 @@
-const { varify } = require("./helpers/jwt");
+const {
+  varify
+} = require("./helpers/jwt");
 // const { Siswa, Admin } = require("../models");
 var jwtDecode = require("jwt-decode");
-const { User} = require("./models");
- 
- 
+const {
+  User
+} = require("./models");
+
+
 function Authentication(req, res, next) {
   try {
     let decode = varify(req.headers.token);
@@ -18,11 +22,11 @@ function Authorization(req, res, next) {
   var validate = jwtDecode(req.headers.token);
 
   User.findOne({
-    where: {
-      id: validate.id,
-      role: "admin"
-    }
-  })
+      where: {
+        id: validate.id,
+        role: "admin"
+      }
+    })
     .then(event => {
       if (event) {
         next();
@@ -37,15 +41,13 @@ function Authorization(req, res, next) {
 }
 
 function SuperAuth(req, res, next) {
-  var validate = varify(req.session.adminBkms);
-  
- 
+  var validate = varify(req.headers.token);
   User.findOne({
-    where: {
-      id: validate.id,
-      role: "super"
-    }
-  })
+      where: {
+        id: validate.id,
+        role: "super"
+      }
+    })
     .then(data => {
       if (data) {
         next();
@@ -58,26 +60,28 @@ function SuperAuth(req, res, next) {
     })
     .catch(next);
 }
+
 function adminAuth(req, res, next) {
-  
-  if(req.session.adminBkms==null){
-  
+  console.log('ini headers', req.headers.token);
+
+  if (req.headers.token == null) {
+
     res.json({
       status: false,
       code: 406,
       message: `you don't have the authority to do this action`,
       data: {},
     })
-  }else{
-    var validate = varify(req.session.adminBkms);
+  } else {
+    var validate = varify(req.headers.token);
     User.findOne({
-      where: {
-        id: validate.id
-      }
-    })
+        where: {
+          id: validate.id
+        }
+      })
       .then(data => {
-       
-  
+
+
         if (data.role == "admin" || data.role == "super") {
           next();
         } else {
@@ -97,5 +101,5 @@ module.exports = {
   Authorization,
   SuperAuth,
   adminAuth
-  
+
 };
