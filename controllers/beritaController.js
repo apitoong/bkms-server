@@ -120,7 +120,8 @@ class beritaController {
             time,
             description,
             gambar_id,
-            status
+            status,
+            posting
         } = req.body;
         let madrasah_id = ''
         let user_id = varify(req.headers.token).id
@@ -143,7 +144,7 @@ class beritaController {
                     user_id,
                     madrasah_id,
                     status,
-                    posting: 'Belum Terbit'
+                    posting: posting
                 })
             })
 

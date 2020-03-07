@@ -192,14 +192,13 @@ class userController {
         }],
 
       })
-
       .then(data => {
-
-
         if (data[0] !== undefined && data[0].madrasah.nama == "BKMS") {
           role = "super"
         }
         if (data.length > 0 && data[0].madrasah.nama !== "BKMS") {
+
+
           next()
         } else {
           User.create({
