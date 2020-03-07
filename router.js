@@ -39,7 +39,7 @@ router.get('/madrasah/all', SuperAuth, madrasahController.allMadrasah)
 router.post('/gambar/add', adminAuth, gambarController.addPath)
 router.delete('/gambar/delete', adminAuth, gambarController.deletePath)
 router.put('/gambar/edit/:gambarId', adminAuth, gambarController.editPath)
-
+router.post('/gambar/clean', gambarController.cleanPath)
 
 
 module.exports = router;

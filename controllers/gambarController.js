@@ -7,7 +7,42 @@ const {
 } = require("../helpers/jwt.js");
 var fs = require("fs");
 var files = fs.readdirSync("./uploads");
+
 class gambarController {
+    static cleanPath(req, res, next) {
+        var files = fs.readdirSync("./uploads");
+        Gambar.findAll({
+                isNewRecord: true
+            })
+            .then(data => {
+                let result = [];
+                for (let i = 0; i < files.length; i++) {
+                    let flag = false;
+                    for (let j = 0; j < data.length; j++) {
+                        if (files[i] == data[j].fileName) {
+                            flag = true;
+                        }
+                    }
+                    if (flag == false) {
+                        if (result.indexOf(files[i]) == -1) {
+
+                            result.push(files[i]);
+                        }
+                    }
+                }
+                let hasil = Object.assign({}, result);
+                for (let i = 0; i < result.length; i++) {
+                    fs.unlink(`./uploads/${result[i]}`, function (err) {});
+                }
+                res.status(200).json({
+                    data: hasil,
+                    status: "berhasil"
+                });
+            })
+            .catch(next);
+
+
+    }
 
     static editPath(req, res, next) {
 
