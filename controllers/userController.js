@@ -200,9 +200,7 @@ class userController {
           role = "super"
         }
         if (data.length > 0 && data[0].madrasah.nama !== "BKMS") {
-          res.status(404).json({
-            messege: `${organisasi} telah mempunyai user ${data[0].email}`
-          });
+          next()
         } else {
           User.create({
               email,
@@ -211,10 +209,6 @@ class userController {
               organisasi
             })
             .then(data => {
-
-
-
-
               return User.findAll({
                 // where: {
                 //   id: data.id
@@ -259,21 +253,18 @@ class userController {
       })
       .then(userData => {
         if (userData == null) {
-          throw new Error("User tidak ada");
+          next()
         } else {
           let validate = comparePassword(email, pass, userData)
           if (validate.status == false) {
-            res.status(404).json({
-              messege: "NOT FOUND user name / pass "
-            });
+            // throw new Error('Password salah')
+            next()
           } else {
             let payload = {
               id: validate.id,
               email
             };
             let token = tokenGenerate(payload);
-
-
             res.status(200).json({
               token: token
             });
@@ -281,7 +272,6 @@ class userController {
         }
       })
       .catch(error => {
-
         res.json({
           status: false,
           code: 406,
