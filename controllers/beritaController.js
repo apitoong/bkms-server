@@ -3,8 +3,8 @@ const {
     User,
     Berita,
     Gambar,
-    Madrasah,
-    BeritaMadrasah
+    Madrasah
+
 } = require("../models");
 const {
     varify
@@ -12,7 +12,23 @@ const {
 class beritaController {
 
 
+    static postingBerita(req, res, next) {
+        Berita.findOne({
+                where: {
+                    id: req.params.beritaId
+                }
+            })
+            .then(data => {
+                data.posting = req.body.verify
+                data.save()
+                res.status(200).json({
+                    status: true,
+                    message: 'Berita Posted !!!'
+                });
+            })
+    }
     static deleteBerita(req, res, next) {
+
 
         Berita.destroy({
                 where: {
@@ -20,18 +36,6 @@ class beritaController {
                 }
             })
             .then(data => {
-
-
-                return BeritaMadrasah.destroy({
-                    where: {
-                        berita_id: req.params.beritaId,
-                    }
-                })
-
-            })
-            .then(data => {
-
-
                 return Gambar.destroy({
                     where: {
                         id: req.body.gambar_id
@@ -61,7 +65,7 @@ class beritaController {
         let gambarBaru = ''
         let user_id = varify(req.headers.token).id
 
-
+        let baru = {}
         Gambar.destroy({
                 where: {
                     id: gambar_id
@@ -73,13 +77,13 @@ class beritaController {
                     path: gambar.path,
                     fileName: gambar.fileName,
                     status: gambar.status,
-                    berita_id: gambar.berita_id
+                    berita_id: req.params.beritaId
                 }
                 return Gambar.create(inputData)
             })
             .then(data => {
 
-                gambarBaru = data.id
+                gambarBaru = data
                 return Berita.findOne({
                     where: {
                         id: req.params.beritaId
@@ -88,20 +92,24 @@ class beritaController {
             })
 
             .then(data => {
-
+                baru = data
                 data.status = status
                 data.title = title
                 data.description = description
-                data.gambar_id = gambarBaru
-                data.save()
+                data.gambar_id = gambarBaru.id
+                data.posting = 'Belum Terbit'
+                return data.save()
 
-
-                res.status(200).json({
-                    data,
-                    gambar,
-                    id: gambarBaru
-                })
             })
+            .then(data => {
+                res.status(200).json({
+                    data: baru,
+                    gambar: gambarBaru,
+                    id: data.id
+                })
+
+            })
+
             .catch(next)
 
     }
@@ -126,7 +134,6 @@ class beritaController {
                 }]
             })
             .then(data => {
-
                 madrasah_id = data.madrasah.id
                 return Berita.create({
                     title,
@@ -134,20 +141,18 @@ class beritaController {
                     description,
                     gambar_id,
                     user_id,
+                    madrasah_id,
                     status,
-                    posting: 'false'
+                    posting: 'Belum Terbit'
                 })
             })
 
             .then(data => {
+
+
                 finalID = data.id
 
-                return BeritaMadrasah.create({
-                    berita_id: data.id,
-                    madrasah_id
-                })
-            })
-            .then(data => {
+
                 return Berita.findAll({
                     include: [{
                             model: Madrasah,

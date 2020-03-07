@@ -2,11 +2,14 @@ const Model = require("../models");
 const {
   User,
   Madrasah,
-  Berita
+  Berita,
+  Gambar,
+
 } = require("../models");
 
 const {
-  tokenGenerate
+  tokenGenerate,
+  varify
 } = require("../helpers/jwt.js");
 const {
   comparePassword,
@@ -15,6 +18,38 @@ const {
 } = require("../helpers/crypto");
 class userController {
 
+  static haveBerita(req, res, next) {
+    let userId = varify(req.headers.token).id
+    console.log('>>>', userId);
+
+    User.findOne({
+        where: {
+          id: userId,
+
+        },
+        include: [{
+          model: Madrasah,
+          as: 'madrasah'
+        }, {
+          model: Berita,
+          as: 'beritas',
+          include: [{
+            model: Gambar,
+            as: "gambar"
+          }, {
+            model: User,
+            as: 'user',
+
+          }, {
+            model: Madrasah,
+            as: 'madrasah'
+          }]
+        }]
+      })
+      .then(data => {
+        res.status(200).json(data)
+      })
+  }
 
   static verifyPass(req, res, next) {
 
@@ -31,6 +66,9 @@ class userController {
       result
     });
   }
+
+
+
   static allUserMadrasah(req, res, next) {
     let madrasah = []
     let user = []
@@ -48,6 +86,7 @@ class userController {
 
       })
       .then(data => {
+        console.log('mmmmmmm   ', data);
 
         user = data
         return Madrasah.findAll({
@@ -68,20 +107,30 @@ class userController {
 
 
   }
-  static checkSession(req, res, next) {
+  static checkToken(req, res, next) {
+
+    let token = req.headers.token
+
+    let id = varify(token).id
+
+    User.findOne({
+        where: {
+          id
+        },
+        include: [{
+          model: Madrasah,
+          as: 'madrasah'
+        }, {
+          model: Berita,
+          as: 'beritas'
+        }]
+      })
+      .then(data => {
+        res.status(200).json(data)
+      })
 
 
 
-    let validate = req.headers.token
-    if (validate == undefined || validate == null) {
-      res.status(404).json({
-        messege: "You Must login"
-      });
-    } else {
-      res.status(200).json({
-        data: validate
-      });
-    }
 
   }
   static allUser(req, res, next) {
@@ -122,25 +171,77 @@ class userController {
 
   }
   static register(req, res, next) {
-    const {
+    let {
       email,
       pass,
       role,
       organisasi
     } = req.body;
 
+    User.findAll({
+        where: {
+          organisasi
+        },
+        include: [{
+          model: Madrasah,
+          as: 'madrasah'
+        }, {
+          model: Berita,
+          as: 'beritas'
+        }],
 
-
-    User.create({
-        email,
-        pass,
-        role,
-        organisasi
       })
+
       .then(data => {
-        res.status(200).json(data);
+
+        if (data[0].madrasah.nama == "BKMS") {
+          role = "super"
+        }
+        if (data.length > 0 && data[0].madrasah.nama !== "BKMS") {
+          res.status(404).json({
+            messege: `${organisasi} telah mempunyai user ${data[0].email}`
+          });
+        } else {
+          User.create({
+              email,
+              pass,
+              role,
+              organisasi
+            })
+            .then(data => {
+
+
+
+
+              return User.findAll({
+                // where: {
+                //   id: data.id
+                // },
+                include: [{
+                  model: Madrasah,
+                  as: 'madrasah'
+                }, {
+                  model: Berita,
+                  as: 'beritas'
+                }],
+                order: [
+                  ['id', 'DESC'],
+                ],
+              })
+
+            })
+            .then(data => {
+              res.status(200).json(data);
+
+            })
+        }
+
       })
-      .catch(next);
+
+
+
+
+    //   .catch(next);
   }
   static login(req, res, next) {
     const {

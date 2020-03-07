@@ -7,7 +7,8 @@ module.exports = (sequelize, DataTypes) => {
     gambar_id: DataTypes.STRING,
     status: DataTypes.STRING,
     user_id: DataTypes.STRING,
-    posting: DataTypes.STRING
+    posting: DataTypes.STRING,
+    madrasah_id: DataTypes.STRING
   }, {});
   Berita.associate = function (models) {
     // associations can be defined here
@@ -17,18 +18,16 @@ module.exports = (sequelize, DataTypes) => {
       // constraints: false
     });
 
-    Berita.belongsToMany(models.Madrasah, {
-      through: "BeritaMadrasah",
-      as: "madrasah",
-      foreignKey: "berita_id",
-      otherKey: "madrasah_id"
-    });
 
     Berita.belongsTo(models.User, {
       foreignKey: 'user_id',
       as: 'user'
     });
-
+    Berita.belongsTo(models.Madrasah, {
+      foreignKey: "madrasah_id",
+      as: "madrasah"
+      // constraints: false
+    });
 
   };
   return Berita;

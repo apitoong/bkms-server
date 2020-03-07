@@ -14,8 +14,10 @@ const {
 
 } = require("./auth");
 
-router.get('/user/session/check', userController.checkSession)
+router.get('/user/check', userController.checkToken)
+router.get('/user/have/berita', adminAuth, userController.haveBerita)
 router.get('/user/all', adminAuth, userController.allUser)
+
 router.get('/user/madrasah', SuperAuth, userController.allUserMadrasah)
 router.post("/user/register", SuperAuth, userController.register);
 router.post("/user/login", userController.login);
@@ -27,6 +29,7 @@ router.post('/user/pass', SuperAuth, userController.verifyPass)
 
 router.get('/berita/all', beritaController.allBerita)
 router.post('/berita/add', adminAuth, beritaController.addBerita)
+router.post('/berita/terbit/:beritaId', adminAuth, beritaController.postingBerita)
 router.put('/berita/edit/:beritaId', adminAuth, beritaController.editBerita)
 router.delete('/berita/delete/:beritaId', adminAuth, beritaController.deleteBerita)
 

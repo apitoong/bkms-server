@@ -1,6 +1,8 @@
 'use strict';
 module.exports = (sequelize, DataTypes) => {
-  const { hashPassword } = require('../helpers/crypto')
+  const {
+    hashPassword
+  } = require('../helpers/crypto')
   const User = sequelize.define('User', {
     email: {
       type: DataTypes.STRING,
@@ -9,9 +11,9 @@ module.exports = (sequelize, DataTypes) => {
         isEmail: {
           args: true,
           msg: 'hasrus mengandung "@"'
-        }, 
+        },
         isunique(value) {
-          
+
           return User.findOne({
               where: {
                 email: value
@@ -31,28 +33,28 @@ module.exports = (sequelize, DataTypes) => {
     pass: DataTypes.STRING,
     role: DataTypes.STRING,
     organisasi: DataTypes.STRING,
-  },  {
+  }, {
     hooks: {
       beforeValidate(User) {
-        console.log('masokkkk hokkkk',User.pass);
-        if(User.pass.length>20){
+        console.log('masokkkk hokkkk', User.pass);
+        if (User.pass.length > 20) {
 
-        }else{
+        } else {
 
           User.pass = hashPassword(User.pass)
         }
       },
-      
+
     }
   });
-  User.associate = function(models) {
+  User.associate = function (models) {
     // associations can be defined here
-    User.hasMany(models.Berita, {
+    User.hasMany(models.Berita, { //one to one
       foreignKey: 'user_id',
       as: 'beritas',
     });
 
-    User.belongsTo(models.Madrasah, {
+    User.belongsTo(models.Madrasah, { // one to many one =madrasah many =user
       foreignKey: "organisasi",
       as: "madrasah",
       constraints: false
