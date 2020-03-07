@@ -14,6 +14,7 @@ const {
 
 } = require("./auth");
 
+
 router.get('/user/check', userController.checkToken)
 router.get('/user/have/berita', adminAuth, userController.haveBerita)
 router.get('/user/all', adminAuth, userController.allUser)

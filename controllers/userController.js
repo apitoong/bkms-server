@@ -20,7 +20,7 @@ class userController {
 
   static haveBerita(req, res, next) {
     let userId = varify(req.headers.token).id
-    console.log('>>>', userId);
+
 
     User.findOne({
         where: {
@@ -86,7 +86,7 @@ class userController {
 
       })
       .then(data => {
-        console.log('mmmmmmm   ', data);
+
 
         user = data
         return Madrasah.findAll({
@@ -178,6 +178,7 @@ class userController {
       organisasi
     } = req.body;
 
+
     User.findAll({
         where: {
           organisasi
@@ -194,7 +195,8 @@ class userController {
 
       .then(data => {
 
-        if (data[0].madrasah.nama == "BKMS") {
+
+        if (data[0] !== undefined && data[0].madrasah.nama == "BKMS") {
           role = "super"
         }
         if (data.length > 0 && data[0].madrasah.nama !== "BKMS") {
@@ -231,6 +233,7 @@ class userController {
 
             })
             .then(data => {
+
               res.status(200).json(data);
 
             })
