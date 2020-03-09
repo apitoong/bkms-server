@@ -178,7 +178,33 @@ class beritaController {
             .catch(next)
 
     }
-
+    static beritaOne(req, res, next) {
+        Berita.findOne({
+                where: {
+                    id: req.params.beritaId
+                },
+                include: [{
+                        model: Madrasah,
+                        as: 'madrasah'
+                    },
+                    {
+                        model: User,
+                        as: 'user'
+                    },
+                    {
+                        model: Gambar,
+                        as: 'gambar'
+                    }
+                ],
+                order: [
+                    ['id', 'DESC'],
+                ],
+            })
+            .then(data => {
+                res.status(200).json(data);
+            })
+            .catch(next)
+    }
     static allBerita(req, res, next) {
         Berita.findAll({
                 include: [{

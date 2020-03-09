@@ -1,6 +1,6 @@
 port=4002
 salt=bkmsSecret
 JWT_SECRET=bkmsScret
-host=http://localhost:4002
+host=http://serverbkms.apitoong.com
 sessionSecret=bkmsSessionSecret
 saltCrypto=bkmsSaltCrypto

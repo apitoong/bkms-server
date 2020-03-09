@@ -29,6 +29,7 @@ router.post('/user/pass', SuperAuth, userController.verifyPass)
 // ============================== BERITA
 
 router.get('/berita/all', beritaController.allBerita)
+router.get('/berita/view/:beritaId', beritaController.beritaOne)
 router.post('/berita/add', adminAuth, beritaController.addBerita)
 router.post('/berita/terbit/:beritaId', adminAuth, beritaController.postingBerita)
 router.put('/berita/edit/:beritaId', adminAuth, beritaController.editBerita)
