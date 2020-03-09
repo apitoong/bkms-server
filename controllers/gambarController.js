@@ -9,6 +9,23 @@ var fs = require("fs");
 var files = fs.readdirSync("./uploads");
 
 class gambarController {
+
+
+    static allGaleri(req, res, next) {
+
+        Gambar.findAll({
+                where: {
+                    status: 'galeri'
+                },
+                order: [
+                    ['id', 'DESC'],
+                ],
+            })
+            .then(data => {
+                res.status(200).json(data);
+            })
+    }
+
     static cleanPath(req, res, next) {
         var files = fs.readdirSync("./uploads");
         Gambar.findAll({
@@ -61,6 +78,23 @@ class gambarController {
             })
     }
 
+    static addGaleri(req, res, next) {
+        const {
+            path,
+            fileName
+        } = req.body;
+        let inputData = {
+            path,
+            fileName,
+            status: "galeri",
+            berita_id: null
+        }
+        Gambar.create(inputData)
+            .then(data => {
+                res.status(200).json(data);
+            })
+            .catch(next);
+    }
     static addPath(req, res, next) {
         const {
             path,
@@ -81,6 +115,20 @@ class gambarController {
             .catch(next);
     }
 
+    static deleteGaleri(req, res, next) {
+
+
+        Gambar.destroy({
+                where: {
+                    id: req.body.id,
+                    status: "galeri"
+                }
+            })
+            .then(data => {
+                fs.unlink(`./uploads/${req.body.path}`, function (err) {});
+                res.status(200).json(data);
+            })
+    }
     static deletePath(req, res, next) {
         Gambar.destroy({
             where: {
