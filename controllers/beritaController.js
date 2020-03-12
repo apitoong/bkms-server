@@ -27,6 +27,8 @@ class beritaController {
                 });
             })
     }
+
+
     static deleteBerita(req, res, next) {
 
 
