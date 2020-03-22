@@ -1,7 +1,7 @@
 {
   "development": {
     "username": "root",
-    "password": "amb230596",
+    "password": "root",
     "database": "bkms",
     "host": "127.0.0.1",
     "dialect": "mysql"

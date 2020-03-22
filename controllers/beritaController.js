@@ -35,9 +35,10 @@ class beritaController {
     static deleteBerita(req, res, next) {
 
 
+
         Berita.destroy({
                 where: {
-                    id: req.params.beritaId
+                    id: req.body.id
                 }
             })
             .then(data => {
