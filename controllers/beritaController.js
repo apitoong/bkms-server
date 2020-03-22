@@ -12,6 +12,9 @@ const {
 class beritaController {
 
 
+
+
+
     static postingBerita(req, res, next) {
         Berita.findOne({
                 where: {
